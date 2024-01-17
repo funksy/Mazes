@@ -5,148 +5,100 @@ from maze import Maze, Cell
 #identify starting cell and walls
 def starting_cell(maze):
     #choose random starting position
-    start_y = int(random.random() * len(maze.grid))
-    start_x = int(random.random() * len(maze.grid[0]))
+    start_x = int(random.random() * len(maze.grid))
+    start_y = int(random.random() * len(maze.grid[0]))
 
-    #ensure it's not on a border
-    if start_y == 0:
-        start_y += 1
-    if start_y == len(maze.grid) - 1:
-        start_y -= 1
-    if start_x == 0:
-        start_x += 1
-    if start_x == len(maze.grid[0]) - 1:
-        start_x -= 1
-
-    #convert starting position to a path
-    maze.grid[start_y][start_x].state = 'path'
-
-    #add surrounding cells to list of walls
-    cell = [start_y, start_x]
-    maze.walls.append([cell[0] - 1, cell[1]])
-    maze.walls.append([cell[0] + 1, cell[1]])
-    maze.walls.append([cell[0], cell[1] - 1])
-    maze.walls.append([cell[0], cell[1] + 1])
-
-    #convert cells in maze grid to walls
-    for wall in maze.walls:
-        maze.grid[wall[0]][wall[1]].state = 'wall'
+    #convert starting position to a path and add frontier cells
+    maze = mark_as_path(maze, start_x, start_y)
 
     return maze
 
 
-#choose a wall from the walls list randomly
-def choose_rand_wall(maze):
-    return maze.walls[int(random.random() * len(maze.walls)) - 1]
-
-
-#check how many of the surrounding cells are paths
-def check_surrounding_cells(maze, rand_wall):
-    s_cells = 0
-    if maze.grid[rand_wall[0] - 1][rand_wall[1]].state == 'path':
-        s_cells += 1
-    if maze.grid[rand_wall[0] + 1][rand_wall[1]].state == 'path':
-        s_cells += 1
-    if maze.grid[rand_wall[0]][rand_wall[1] - 1].state == 'path':
-        s_cells += 1
-    if maze.grid[rand_wall[0]][rand_wall[1] + 1].state == 'path':
-        s_cells += 1
-    return s_cells
-
-
-#define if the wall should convert to a path
-def is_rand_wall_valid(maze, rand_wall):
-    u = 'unvisited'
-    p = 'path'
-    #make sure the wall is not on the border
-    if rand_wall[0] != 0 and rand_wall[0] != len(maze.grid) - 1 and rand_wall[1] != 0 and rand_wall[1] != len(maze.grid[0]) - 1:
-
-        #check number of surrounding cells
-        if check_surrounding_cells(maze, rand_wall) < 2:
-
-            #check if rand_wall is valid and below a cell
-            if maze.grid[rand_wall[0] - 1][rand_wall[1]].state == u and maze.grid[rand_wall[0] + 1][rand_wall[1]].state == p:
-                return True
-
-            #check if rand_wall is valid and above a cell
-            elif maze.grid[rand_wall[0] + 1][rand_wall[1]].state == u and maze.grid[rand_wall[0] -1][rand_wall[1]].state == p:
-                return True
-
-            #check if rand_wall is valid and left of a cell
-            elif maze.grid[rand_wall[0]][rand_wall[1] - 1].state == u and maze.grid[rand_wall[0]][rand_wall[1] + 1].state == p:
-                return True
-
-            #check if rand wall is valid and right of a cell
-            elif maze.grid[rand_wall[0]][rand_wall[1] + 1].state == u and maze.grid[rand_wall[0]][rand_wall[1] - 1].state == p:
-                return True
-
-    return False
-
-
-#creates walls surrounding the given cell and appends them to the list of walls
-def create_new_walls(maze, cell):
-    #element below
-    if cell[0] - 1 != 0 and maze.grid[cell[0] - 1][cell[1]].state != 'path':
-        maze.grid[cell[0] - 1][cell[1]].state = 'wall'
-    if [cell[0] - 1, cell[1]] not in maze.walls:
-        maze.walls.append([cell[0] - 1, cell[1]])
-
-    #element above
-    elif cell[0] + 1 != len(maze.grid) - 1 and maze.grid[cell[0] + 1][cell[1]].state != 'path':
-        maze.grid[cell[0] + 1][cell[1]].state = 'wall'
-    if [cell[0] + 1, cell[1]] not in maze.walls:
-        maze.walls.append([cell[0] + 1, cell[1]])
-
-    #element left
-    elif cell[1] - 1 != 0 and maze.grid[cell[0]][cell[1] - 1].state != 'path':
-        maze.grid[cell[0]][cell[1] - 1].state = 'wall'
-    if [cell[0], cell[1] - 1] not in maze.walls:
-        maze.walls.append([cell[0], cell[1] - 1])
-
-    #element right
-    elif cell[1] + 1 != len(maze.grid[0]) - 1 and maze.grid[cell[0]][cell[1] + 1].state != 'path':
-        maze.grid[cell[0]][cell[1] + 1].state = 'wall'
-    if [cell[0], cell[1] + 1] not in maze.walls:
-        maze.walls.append([cell[0], cell[1] + 1])
-
-    maze.walls.remove(cell)
-
+#mark given cell as a path and add appropriate frontier cells
+def mark_as_path(maze, cell_x, cell_y):
+    maze.grid[cell_x][cell_y].state = 'path'
+    if cell_x > 0:
+        if maze.grid[cell_x - 1][cell_y].state == 'unvisited':
+            add_to_frontier(maze, [cell_x - 1, cell_y])
+    if cell_x < len(maze.grid) - 1:
+        if maze.grid[cell_x + 1][cell_y].state == 'unvisited':
+            add_to_frontier(maze, [cell_x + 1, cell_y])
+    if cell_y > 0:
+        if maze.grid[cell_x][cell_y - 1].state == 'unvisited':
+            add_to_frontier(maze, [cell_x, cell_y - 1])
+    if cell_y < len(maze.grid[0]) - 1:
+        if maze.grid[cell_x][cell_y + 1].state == 'unvisited':
+            add_to_frontier(maze, [cell_x, cell_y + 1])
     return maze
 
 
-#main loop to create a maze
+#checks if cell is already in frontier, then adds
+def add_to_frontier(maze, frontier_cell):
+    if frontier_cell not in maze.frontier:
+        maze.frontier.append(frontier_cell)
+
+
+#choose a random element from the frontier list and return it
+def choose_rand_frontier(maze):
+    return maze.frontier[int(random.random() * len(maze.frontier)) - 1]
+
+
+#choose a random adjacent cell, given the random frontier cell
+def choose_rand_neighbor(maze, rand_frontier):
+    directions = ['u', 'd', 'l', 'r']
+    x, y = rand_frontier[0], rand_frontier[1]
+    random.shuffle(directions)
+    for direction in directions:
+        if direction == 'u' and y > 0:
+            if maze.grid[x][y - 1].state == 'path':
+                return [x, y - 1], direction
+        if direction == 'd' and y < len(maze.grid[0]) - 1:
+            if maze.grid[x][y + 1].state == 'path':
+                return [x, y + 1], direction
+        if direction == 'l' and x > 0:
+            if maze.grid[x - 1][y].state == 'path':
+                return [x - 1, y], direction
+        if direction == 'r' and x < len(maze.grid ) - 1:
+            if maze.grid[x + 1][y].state == 'path':
+                return [x + 1, y], direction
+
+
+#remove walls between given cells
+def remove_walls(maze, rand_frontier, rand_neighbor, direction):
+    if direction == 'u':
+        maze.grid[rand_frontier[0]][rand_frontier[1]].walls['top'] = False
+        maze.grid[rand_neighbor[0]][rand_neighbor[1]].walls['bottom'] = False
+    elif direction == 'd':
+        maze.grid[rand_frontier[0]][rand_frontier[1]].walls['bottom'] = False
+        maze.grid[rand_neighbor[0]][rand_neighbor[1]].walls['top'] = False
+    elif direction == 'l':
+        maze.grid[rand_frontier[0]][rand_frontier[1]].walls['left'] = False
+        maze.grid[rand_neighbor[0]][rand_neighbor[1]].walls['right'] = False
+    elif direction == 'r':
+        maze.grid[rand_frontier[0]][rand_frontier[1]].walls['right'] = False
+        maze.grid[rand_neighbor[0]][rand_neighbor[1]].walls['left'] = False
+    return maze
+
+
+
+#main loop to create the maze
 def create_maze(maze):
-    #run first time to select starting cell
+    #runs once to select starting cell
     if maze.started == False:
         maze = starting_cell(maze)
         maze.started = True
 
     #loop to create path and walls
-    if maze.walls:
-        rand_wall = choose_rand_wall(maze)
-        if is_rand_wall_valid(maze, rand_wall):
-            maze.grid[rand_wall[0]][rand_wall[1]].state = 'path'
-            maze = create_new_walls(maze, rand_wall)
-        else:
-            maze.walls.remove(rand_wall)
+    #if there are frontier cells
+    if maze.frontier:
+        rand_frontier = choose_rand_frontier(maze)
+        rand_neighbor, direction = choose_rand_neighbor(maze, rand_frontier)
+        maze = remove_walls(maze, rand_frontier, rand_neighbor, direction)
+        maze = mark_as_path(maze, rand_frontier[0], rand_frontier[1])
+        maze.frontier.remove(rand_frontier)
 
-    #convert remaining unvisited cells to walls and add start and finish
+    #create start and finish and flag is finished
     else:
-        for i in range(len(maze.grid)):
-            for j in range(len(maze.grid[0])):
-                if maze.grid[i][j].state == 'unvisited':
-                    maze.grid[i][j].state = 'wall'
-
-        for i in range(len(maze.grid[0])):
-            if maze.grid[1][i].state == 'path':
-                maze.grid[0][i].state = 'start'
-                break
-
-        for i in range(len(maze.grid[0]) - 1, 0, -1):
-            if maze.grid[len(maze.grid) -2][i].state == 'path':
-                maze.grid[len(maze.grid) -1][i].state = 'finish'
-                break
-
-        maze.created = True
-
-    return maze
+        maze.grid[int(random.random() * len(maze.grid) / 2)][int(random.random() * len(maze.grid[0]) / 2)].state = 'start'
+        maze.grid[int(random.random() * len(maze.grid) / 2 + len(maze.grid) / 2)][int(random.random() * len(maze.grid[0]) / 2 + len(maze.grid[0]) / 2)].state = 'finish'
+        maze.finished = True
