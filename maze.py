@@ -16,8 +16,8 @@ class Cell:
 #the collection of cells that a maze is composed of
 class Maze:
     def __init__(self, size):
-        self.started = False
-        self.finished = False
+        self.initialized = False
+        self.created = False
         self.height = size
         self.width = size
         self.grid = []
@@ -26,6 +26,8 @@ class Maze:
             for j in range(self.height):
                 line.append(Cell(i, j))
             self.grid.append(line)
+        self.start = []
+        self.finish = []
         self.frontier = []
 
 
@@ -47,9 +49,9 @@ class Maze:
                     pygame.draw.rect(surface, pygame.Color('gray55'), (x, y, cell_x, cell_y))
 
                 if current_cell.state == 'start':
-                    pygame.draw.rect(surface, pygame.Color('forestgreen'), (x, y, cell_x, cell_y))
+                    pygame.draw.rect(surface, pygame.Color(0, 102, 0, 50), (x, y, cell_x, cell_y))
                 if current_cell.state == 'finish':
-                    pygame.draw.rect(surface, pygame.Color('red2'), (x, y, cell_x, cell_y))
+                    pygame.draw.rect(surface, pygame.Color(204, 0, 0, 50), (x, y, cell_x, cell_y))
 
                 if current_cell.walls["top"]:
                     pygame.draw.line(surface, pygame.Color('black'), (x, y), (x + cell_x, y), 2)
