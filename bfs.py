@@ -20,17 +20,17 @@ def add_adjacent_cells(search, maze):
 
 
 def search_maze(search, maze):
-    while search.frontier and search.current != search.finish:
+    if search.frontier and search.current != search.finish:
         search.current = search.frontier[0]
         search = add_adjacent_cells(search, maze)
         search.explored[(search.current[0], search.current[1])] = True
         search.frontier.pop(0)
 
-    # else:
-    search.finished = True
+    else:
+        search.finished = True
 
 
 def backtrack(search):
-    while search.current != search.start:
+    if search.current != search.start:
         search.solution.append(search.backtrack[(search.current[0], search.current[1])])
         search.current = search.backtrack[(search.current[0], search.current[1])]

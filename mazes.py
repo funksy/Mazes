@@ -6,15 +6,15 @@ from search import Search
 from random_prim import create_maze, starting_cell
 from bfs import search_maze, backtrack
 
-res = [1000, 1000]
+res = [1200, 1200]
 
 pygame.init()
 display_win = pygame.display.set_mode(res)
 # win = pygame.Surface((400, 400))
 clock = pygame.time.Clock()
 
-size = 500
-block = 28
+size = 600
+block = 10
 
 maze = Maze(size)
 search = Search(maze)
@@ -30,14 +30,23 @@ while True:
 
     # run create_maze function until maze is created
     if maze.created == False:
-        create_maze(maze)
+        count = 0
+        while count < 10000:
+            create_maze(maze)
+            count += 1
     elif maze.created == True and search.started == False:
         search.initialize(maze)
         search.started = True
     elif search.finished == False:
-        search_maze(search, maze)
+        count = 0
+        while count < 10000:
+            search_maze(search, maze)
+            count += 1
     else:
-        backtrack(search)
+        count = 0
+        while count < 5000:
+            backtrack(search)
+            count += 1
 
 
     #draw maze in it's current state

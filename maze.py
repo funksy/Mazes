@@ -39,25 +39,24 @@ class Maze:
                 x, y = i * cell_x, j * cell_y
                 current_cell = self.grid[i][j]
 
+                #draw block with appropriate color
                 if current_cell.state == 'unvisited':
                     pygame.draw.rect(surface, pygame.Color('gray25'), (x, y, cell_x, cell_y))
-
                 if current_cell.state == 'wall':
                     pygame.draw.rect(surface, pygame.Color('gray25'), (x, y, cell_x, cell_y))
-
                 if current_cell.state == 'path':
                     pygame.draw.rect(surface, pygame.Color('gray55'), (x, y, cell_x, cell_y))
-
                 if current_cell.state == 'start':
                     pygame.draw.rect(surface, pygame.Color(0, 102, 0, 50), (x, y, cell_x, cell_y))
                 if current_cell.state == 'finish':
                     pygame.draw.rect(surface, pygame.Color(204, 0, 0, 50), (x, y, cell_x, cell_y))
 
+                #draw walls
                 if current_cell.walls["top"]:
-                    pygame.draw.line(surface, pygame.Color('black'), (x, y), (x + cell_x, y), 2)
+                    pygame.draw.line(surface, pygame.Color('black'), (x, y), (x + cell_x, y), 1)
                 if current_cell.walls["left"]:
-                    pygame.draw.line(surface, pygame.Color('black'), (x, y), (x, y + cell_y), 2)
+                    pygame.draw.line(surface, pygame.Color('black'), (x, y), (x, y + cell_y), 1)
                 if current_cell.walls["bottom"]:
-                    pygame.draw.line(surface, pygame.Color('black'), (x, y + cell_y), (x + cell_x, y + cell_y), 2)
+                    pygame.draw.line(surface, pygame.Color('black'), (x, y + cell_y), (x + cell_x, y + cell_y), 1)
                 if current_cell.walls["right"]:
-                    pygame.draw.line(surface, pygame.Color('black'), (x + cell_x, y), (x + cell_x, y + cell_y), 2)
+                    pygame.draw.line(surface, pygame.Color('black'), (x + cell_x, y), (x + cell_x, y + cell_y), 1)

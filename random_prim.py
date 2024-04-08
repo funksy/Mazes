@@ -89,19 +89,19 @@ def create_maze(maze):
         maze.initialized = True
 
     #loop to create path and walls
-    while maze.frontier:
+    if maze.frontier:
         rand_frontier = choose_rand_frontier(maze)
         rand_neighbor, direction = choose_rand_neighbor(maze, rand_frontier)
         maze = remove_walls(maze, rand_frontier, rand_neighbor, direction)
         maze = mark_as_path(maze, rand_frontier[0], rand_frontier[1])
         maze.frontier.remove(rand_frontier)
 
-    #create start and finish and flag is finished
-    # else:
-    start_cell = maze.grid[int(random.random() * len(maze.grid) / 2)][int(random.random() * len(maze.grid[0]) / 2)]
-    start_cell.state = 'start'
-    maze.start = [start_cell.x, start_cell.y]
-    finish_cell = maze.grid[int(random.random() * len(maze.grid) / 2 + len(maze.grid) / 2)][int(random.random() * len(maze.grid[0]) / 2 + len(maze.grid[0]) / 2)]
-    finish_cell.state = 'finish'
-    maze.finish = [finish_cell.x, finish_cell.y]
-    maze.created = True
+    #create start and finish and flag as finished
+    elif maze.created == False:
+        start_cell = maze.grid[int(random.random() * len(maze.grid) / 2)][int(random.random() * len(maze.grid[0]) / 2)]
+        start_cell.state = 'start'
+        maze.start = [start_cell.x, start_cell.y]
+        finish_cell = maze.grid[int(random.random() * len(maze.grid) / 2 + len(maze.grid) / 2)][int(random.random() * len(maze.grid[0]) / 2 + len(maze.grid[0]) / 2)]
+        finish_cell.state = 'finish'
+        maze.finish = [finish_cell.x, finish_cell.y]
+        maze.created = True
